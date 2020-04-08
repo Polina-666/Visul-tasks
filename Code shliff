@@ -1,0 +1,116 @@
+```{r message=FALSE, warning=FALSE, include=FALSE}
+install.packages('rvest')    # install 'rvest' library in R; library and package are synonyms
+install.packages('tidyverse')
+install.packages("progress")
+```
+
+```{r}
+
+library(rvest)    
+library(tidyverse)
+library(progress)
+
+```
+
+```{r}
+
+url <- "https://www.instrument.co.ua/c-almaz/krugi-almaznye-shlif.html"
+content <- read_html(url)
+content
+
+```
+
+```{r}
+url <- "https://www.instrument.co.ua/c-almaz/krugi-almaznye-shlif.html"
+content <- read_html(url)
+content
+
+```
+
+```{r}
+url_template <- "https://www.instrument.co.ua/c-almaz/krugi-almaznye-shlif/page-"
+adreses <- str_c(url_template,c(1:3))
+npages <- 3
+
+```
+
+```{r}
+content %>%
+  html_nodes('div.items') %>%
+  html_text()
+```
+
+```{r}
+
+titles <- content %>%
+  html_nodes('div.items [class="item__name--table"]') %>%
+  html_text() %>%
+  str_trim()
+titles
+```
+
+```{r}
+prices <- content %>%
+  html_nodes('div.items [class="item__price"]') %>%
+  html_text() %>%
+  str_trim()
+prices
+```
+
+```{r}
+df <- data.frame(title = titles, price = prices)
+write.csv(df, "shliff.csv", row.names = FALSE)    
+```
+
+```{r}
+read.csv("shliff.csv")
+```
+
+```{r}
+npages <- 3
+prices <- c()
+titles <- c()
+links <- c()
+url_template <- "https://www.instrument.co.ua/c-almaz/krugi-almaznye-shlif/page-"
+```
+
+```{r}
+for (page in adreses) {
+   
+  content <- read_html(page)
+  
+  titles <- content %>%
+    html_nodes('div.items [class="item__name--table"]') %>%
+    html_text() %>%
+    str_trim() %>%
+    c(titles, .)    
+  
+  prices <- content %>%
+    html_nodes('div.items [class="item__price"]') %>%
+    html_text() %>%
+    str_trim()  %>%
+    c(prices, .)
+  
+  links <- content %>%
+    html_nodes('div.items [class="item__link"] a') %>%
+    html_attr("href") %>%
+    c(links, .)
+  
+
+  Sys.sleep(3)    
+}
+```
+
+
+```{r}
+data.frame(title = titles,
+           price = prices,
+           link = links) %>%
+write.csv("shliff.csv",
+            row.names = FALSE) 
+```
+
+```{r}
+df <- read.csv("shliff.csv")
+df
+```
