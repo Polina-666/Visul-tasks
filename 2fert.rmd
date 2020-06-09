@@ -1,0 +1,60 @@
+```{r}
+library(tidyverse)
+library(lubridate)
+library(rvest)
+library(dplyr)
+```
+
+```{r}
+url <-"https://population.un.org/wpp/Download/Files/1_Indicators%20(Standard)/CSV_FILES/WPP2019_Fertility_by_Age.csv"
+fert <- read.csv(url(url), encoding = "UTF-8", na = c("NULL", "NONE"))
+
+fert
+```
+
+
+
+```{r}
+fert <- fert %>%
+select (Location,PASFR,Births )
+fert
+```
+
+
+```{r}
+fert <- fert %>%
+filter(Location == "India")
+fert
+```
+```{r}
+fert_loc <- merge(fert,loc, all=TRUE) %>%
+arrange(PASFR)
+```
+
+```{r}
+write.csv(fert_loc, "fert_loc.csv", row.names = FALSE)
+```
+
+```{r}
+read.csv("fert_loc.csv")
+```
+
+
+
+
+```{r}
+chart <- read.csv("fert_loc.csv")
+
+  ggplot(chart, aes(Births, PASFR, color = Location)) +
+ geom_line(color="#213236") +
+  geom_col(fill ="#E8D47D") +
+
+    
+theme_minimal()
+  
+ggsave("fert_loc.png",width=16, height = 10, units= "cm")
+```
+
+
+
+

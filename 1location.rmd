@@ -1,0 +1,27 @@
+```{r}
+library(tidyverse)
+library(lubridate)
+library(rvest)
+library(dplyr)
+```
+
+```{r}
+url <- "https://population.un.org/wpp/Download/Files/1_Indicators%20(Standard)/CSV_FILES/WPP2019_Fertility_by_Age.csv"
+location <- read.csv(url(url), encoding = "UTF-8", na = c("NULL", "NONE"))
+location
+```
+
+```{r}
+location <- location %>%
+select (Location, MidPeriod,AgeGrp )
+location 
+```
+
+```{r}
+location  <- location  %>%
+filter(Location == "Denmark")
+location 
+```
+
+
+
